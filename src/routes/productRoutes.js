@@ -1,24 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const productsController = require('../controller/productsController');
+const { auth, restrictTo } = require('../middlewares/authMiddleware');
 
 // ======================================
 // ROTAS DE PRODUTOS
 // ======================================
 
 // Rota para buscar todos os produtos ou por nome (query parameter)
-router.get("/", productsController.getAllProducts);
+// Apenas usuários logados podem ler.
+router.get("/", auth, productsController.getAllProducts);
 
 // Rota para adicionar um novo produto
-router.post("/", productsController.addProduct);
+// Apenas usuários com perfil de 'Analista' ou 'Supervisor' podem criar produtos.
+router.post("/", auth, restrictTo(['Analista', 'Supervisor']), productsController.addProduct);
 
-// Rota para buscar um produto por ID (parâmetro de URL)
-router.get("/:id", productsController.getProductById);
+// Rota para buscar um produto por ID 
+// Apenas usuários logados podem ler.
+router.get("/:id", auth, productsController.getProductById);
 
 // Rota para atualizar um produto existente
-router.put("/:id", productsController.updateProduct);
+// Apenas usuários com perfil de 'Supervisor' podem editar produtos.
+router.put("/:id", auth, restrictTo(['Supervisor']), productsController.updateProduct);
 
 // Rota para deletar um produto por ID
-router.delete("/:id", productsController.deleteProduct);
+// Apenas usuários com perfil de 'Supervisor' podem deletar produtos.
+router.delete("/:id", auth, restrictTo(['Supervisor']), productsController.deleteProduct);
 
 module.exports = router;

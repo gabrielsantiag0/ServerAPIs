@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const { sql, poolPromise } = require('../config/conn');
 
-// A chave secreta do JWT 
+// A chave secreta do JWT
 const JWT_SECRET = process.env.JWT_SECRET || 'sua_chave_secreta_padrao';
 
 // Verifica se o usuário está autenticado
@@ -20,6 +20,7 @@ exports.auth = async (req, res, next) => {
         // Verifica o token usando a chave secreta
         const decoded = jwt.verify(token, JWT_SECRET);
         
+        // Adiciona a informação do usuário decodificada à requisição
         req.user = decoded;
         next();
 
@@ -33,14 +34,11 @@ exports.auth = async (req, res, next) => {
 };
 
 // Middleware para verificar o papel do usuário
-exports.authorize = (roles = []) => {
-    if (typeof roles === 'string') {
-        roles = [roles]; // Garante que roles seja um array
-    }
-
+exports.restrictTo = (roles = []) => {
+    // A função retornada será o middleware que o Express usará
     return (req, res, next) => {
-        // Verifica se o usuário tem o papel necessário
-        if (!roles.includes(req.user.role)) {
+        // Verifica se o usuário tem o perfil necessário
+        if (!req.user || !req.user.perfil || !roles.includes(req.user.perfil)) {
             return res.status(403).json({
                 success: false,
                 message: 'Acesso proibido. Você não tem permissão para esta ação.'

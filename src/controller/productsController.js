@@ -61,11 +61,14 @@ const getProductById = async (req, res) => {
 // Adicionar um novo produto
 const addProduct = async (req, res) => {
     try {
-        const { nome, descricao, preco, quantidade, usuario_id } = req.body;
-        if (!nome || !preco || !quantidade || !usuario_id) {
+        const { nome, descricao, preco, quantidade } = req.body;
+        // O ID do usuário é obtido diretamente do token de autenticação
+        const userId = req.user.id; 
+
+        if (!nome || !preco || !quantidade) {
             return res.status(400).json({
                 success: false,
-                message: "Nome, preço, quantidade e ID do usuário são obrigatórios."
+                message: "Nome, preço e quantidade são obrigatórios."
             });
         }
 
@@ -75,7 +78,7 @@ const addProduct = async (req, res) => {
             .input("descricao", sql.Text, descricao)
             .input("preco", sql.Decimal(18, 2), preco)
             .input("quantidade", sql.Int, quantidade)
-            .input("usuario_id", sql.Int, usuario_id)
+            .input("usuario_id", sql.Int, userId) // Usa o ID do usuário do token
             .query("INSERT INTO Produtos (nome, descricao, preco, quantidade, usuario_id) VALUES (@nome, @descricao, @preco, @quantidade, @usuario_id)");
 
         res.status(201).json({

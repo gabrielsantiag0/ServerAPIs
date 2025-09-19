@@ -8,15 +8,14 @@ const config = {
   server: process.env.DB_SERVER,
   database: process.env.DB_DATABASE,
   options: {
-    encrypt: true, 
-    trustServerCertificate: true, 
+    encrypt: true,
+    trustServerCertificate: true,
   },
 };
 
 const poolPromise = new sql.ConnectionPool(config)
   .connect()
   .then(pool => {
-    console.log('Conectado ao SQL Server!');
     return pool;
   })
   .catch(err => {
@@ -24,7 +23,16 @@ const poolPromise = new sql.ConnectionPool(config)
     return null;
   });
 
+const connectToSqlServer = async () => {
+    try {
+        await poolPromise;
+    } catch (error) {
+        throw new Error('Erro ao conectar com o banco de dados.');
+    }
+};
+
 module.exports = {
-  sql, // Opcional: exporta o objeto sql
-  poolPromise // Exporta o pool de conexões, que sua API precisa
+  sql,
+  poolPromise,
+  connectToSqlServer,
 };
