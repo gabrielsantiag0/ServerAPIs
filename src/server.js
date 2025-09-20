@@ -6,7 +6,7 @@ const { connectToSqlServer } = require('./config/conn');
 // Importar as rotas
 const usersRoutes = require('./routes/userAuthRoutes');
 const productRoutes = require('./routes/productRoutes');
-const publicProductsRoutes = require('./routes/publicProductsRoutes'); // Importa o novo roteador
+const publicProductsRoutes = require('./routes/publicProductsRoutes'); 
 
 const app = express();
 const PORT = process.env.PORT || 5000;
