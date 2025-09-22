@@ -126,11 +126,28 @@ const loginUser = async (req, res) => {
 const getAllUsers = async (req, res) => {
     try {
         const pool = await poolPromise;
-        const result = await pool.request().query("SELECT * FROM Usuarios");
+        
+        // A consulta SQL foi alterada para fazer um JOIN com as tabelas Usuario_Grupo e Grupos
+        const result = await pool.request().query(
+            `SELECT
+                u.id,
+                u.nome,
+                u.email,
+                g.nome AS perfil
+            FROM
+                Usuarios AS u
+            INNER JOIN
+                Usuario_Grupo AS ug ON u.id = ug.usuario_id
+            INNER JOIN
+                Grupos AS g ON ug.grupo_id = g.id`
+        );
+        
+        // A sua API agora vai retornar um campo 'perfil' para cada usuário
         res.status(200).json({
             success: true,
             users: result.recordset
         });
+
     } catch (error) {
         console.error("Erro ao buscar todos os usuários:", error);
         res.status(500).json({
