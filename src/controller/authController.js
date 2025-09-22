@@ -127,7 +127,7 @@ const getAllUsers = async (req, res) => {
     try {
         const pool = await poolPromise;
         
-        // A consulta SQL foi alterada para fazer um JOIN com as tabelas Usuario_Grupo e Grupos
+        // A consulta SQl vai Fazer um JOIN com as tabelas Usuario_Grupo e Grupos
         const result = await pool.request().query(
             `SELECT
                 u.id,
@@ -142,7 +142,7 @@ const getAllUsers = async (req, res) => {
                 Grupos AS g ON ug.grupo_id = g.id`
         );
         
-        // A sua API agora vai retornar um campo 'perfil' para cada usuário
+        // Retornar um campo 'perfil' para cada usuário
         res.status(200).json({
             success: true,
             users: result.recordset
